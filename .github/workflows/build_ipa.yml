@@ -47,12 +47,25 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          APP_PATH="$(find build/Build/Products -maxdepth 2 -type d -name 'KeyboardApp.app' -print -quit)"
-          test -n "$APP_PATH"
+
+          APP_PATH="$(find "$GITHUB_WORKSPACE/build/Build/Products" \
+            -type d \
+            -path '*/Release-iphoneos/KeyboardApp.app' \
+            -print -quit)"
+
+          if [[ -z "$APP_PATH" ]]; then
+            echo "KeyboardApp.app not found"
+            find "$GITHUB_WORKSPACE/build/Build/Products" -maxdepth 4 -print
+            exit 1
+          fi
+
           rm -rf Payload KeyboardApp-unsigned.ipa
-          mkdir Payload
-          cp -R "$APP_PATH" Payload/
-          ditto -c -k --sequesterRsrc --keepParent Payload KeyboardApp-unsigned.ipa
+          mkdir -p Payload
+          cp -R "$APP_PATH" Payload/KeyboardApp.app
+
+          ditto -c -k --sequesterRsrc --keepParent \
+            Payload \
+            KeyboardApp-unsigned.ipa
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
