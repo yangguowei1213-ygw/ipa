@@ -1,3 +1,4 @@
+import AudioToolbox
 import UIKit
 
 final class KeyboardViewController: UIInputViewController {
@@ -133,9 +134,9 @@ final class KeyboardViewController: UIInputViewController {
             updateCharacterTitles()
         }
 
-        // playInputClick is safe to call while the extension is visible. Full Access is not
-        // required merely to play the system click; it is required for sensitive shared data.
-        playInputClick()
+        // AudioServices is available to an application extension and avoids relying on
+        // SDK-specific UIInputViewController helpers. The system may still suppress audio.
+        AudioServicesPlaySystemSound(1104)
     }
 
     private func updateCharacterTitles() {
@@ -188,7 +189,6 @@ final class KeyboardKey: UIButton {
         layer.shadowOpacity = 0.18
         layer.shadowRadius = 0.5
         layer.shadowOffset = CGSize(width: 0, height: 1)
-        adjustsImageWhenHighlighted = false
         accessibilityLabel = title
     }
 
