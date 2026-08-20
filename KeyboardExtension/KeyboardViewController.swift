@@ -1,4 +1,3 @@
-import AudioToolbox
 import UIKit
 
 final class KeyboardViewController: UIInputViewController {
@@ -134,9 +133,8 @@ final class KeyboardViewController: UIInputViewController {
             updateCharacterTitles()
         }
 
-        // AudioServices is available to an application extension and avoids relying on
-        // SDK-specific UIInputViewController helpers. The system may still suppress audio.
-        AudioServicesPlaySystemSound(1104)
+        // Third-party keyboard audio is controlled by iOS. Keep the extension silent by
+        // default to avoid an unnecessary framework dependency and reduce memory usage.
     }
 
     private func updateCharacterTitles() {

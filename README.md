@@ -24,7 +24,7 @@ git push -u origin main
 
 ## 2. 功能与限制
 
-- `KeyboardExtension/KeyboardViewController.swift`：系统毛玻璃背景、Light/Dark 自适应键帽、字母/删除/换行/切换键盘、Shift、按键气泡、点击音和轻触觉。
+- `KeyboardExtension/KeyboardViewController.swift`：系统毛玻璃背景、Light/Dark 自适应键帽、字母/删除/换行/切换键盘、Shift、按键气泡和轻触觉；按键声音由 iOS 系统策略控制，扩展默认不主动播放声音。
 - 使用 `textDocumentProxy` 插入文本和删除字符；不读取或上传用户输入内容。
 - `SharedWordStore.swift` 使用 `group.com.app.keyboard` 的 `UserDefaults`，限制词库读取数量以降低键盘扩展内存占用。
 - 宿主 App `SettingsView` 可保存每行一个自定义词语。
