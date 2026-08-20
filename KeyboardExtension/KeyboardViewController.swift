@@ -119,7 +119,7 @@ final class KeyboardViewController: UIInputViewController {
         guard sender === currentKey else { return }
         currentKey = nil
 
-        switch sender.role {
+        switch sender.keyRole {
         case .character:
             let text = isShifted ? sender.keyTitle.uppercased() : sender.keyTitle.lowercased()
             textDocumentProxy.insertText(text)
@@ -142,12 +142,12 @@ final class KeyboardViewController: UIInputViewController {
             .compactMap { $0 as? UIStackView }
             .flatMap { $0.arrangedSubviews }
             .compactMap { $0 as? KeyboardKey }
-            .filter { $0.role == .character }
+            .filter { $0.keyRole == .character }
             .forEach { $0.setTitle(isShifted ? $0.keyTitle.uppercased() : $0.keyTitle.lowercased(), for: .normal) }
     }
 
     private func showCallout(for key: KeyboardKey) {
-        guard key.role == .character || key.role == .space else { return }
+        guard key.keyRole == .character || key.keyRole == .space else { return }
         hideCallout()
         let callout = KeyCalloutView(text: key.keyTitle)
         callout.translatesAutoresizingMaskIntoConstraints = false
@@ -170,12 +170,12 @@ final class KeyboardViewController: UIInputViewController {
 
 final class KeyboardKey: UIButton {
     enum Role: Equatable { case character, space, delete, shift, nextKeyboard, returnKey }
-    let role: Role
+    let keyRole: Role
     let keyTitle: String
     var widthWeight: CGFloat = 1
 
     init(title: String, role: Role) {
-        self.role = role
+        self.keyRole = role
         self.keyTitle = title
         super.init(frame: .zero)
         setTitle(title, for: .normal)
