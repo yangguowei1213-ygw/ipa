@@ -9,11 +9,28 @@ final class CleanerViewModel: ObservableObject {
     @Published var status = "正在检查设备…"
     @Published var isCleaning = false
     @Published var logs: [CleanLog] = []
+    @Published var memory: MemorySnapshot?
+    private var monitorTask: Task<Void, Never>?
 
-    init() { refreshStatus() }
+    init() {
+        refreshStatus()
+        updateMemory()
+        monitorTask = Task { @MainActor [weak self] in
+            while !Task.isCancelled {
+                self?.updateMemory()
+                try? await Task.sleep(for: .seconds(2))
+            }
+        }
+    }
+
+    deinit { monitorTask?.cancel() }
 
     func refreshStatus() {
         status = "系统运行正常 · iOS \(UIDevice.current.systemVersion)"
+    }
+
+    func updateMemory() {
+        memory = MemoryMonitor.snapshot()
     }
 
     func clean() {

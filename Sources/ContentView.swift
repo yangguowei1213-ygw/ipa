@@ -9,6 +9,7 @@ struct ContentView: View {
                 VStack(spacing: 20) {
                     header
                     statusCard
+                    memoryCard
                     cleanButton
                     historyCard
                 }
@@ -44,6 +45,29 @@ struct ContentView: View {
             Spacer()
             if model.isCleaning { ProgressView() }
         }
+        .padding(18).background(.background, in: RoundedRectangle(cornerRadius: 18))
+    }
+
+    private var memoryCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("实时内存", systemImage: "memorychip").font(.headline)
+                Spacer()
+                Text(model.memory?.usedText ?? "读取中…")
+                    .font(.headline.monospacedDigit())
+            }
+            ProgressView(value: model.memory?.fraction ?? 0)
+                .tint((model.memory?.fraction ?? 0) > 0.85 ? .orange : .blue)
+            HStack {
+                Text("已用 / 总内存：\(model.memory?.totalText ?? "—")")
+                Spacer()
+                Text("可用：\(model.memory?.availableText ?? "—")")
+            }
+            .font(.caption).foregroundStyle(.secondary)
+            Text("数据为设备级内存统计；iOS 不向第三方 App 提供其他应用的逐进程内存详情。")
+                .font(.caption2).foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(18).background(.background, in: RoundedRectangle(cornerRadius: 18))
     }
 
