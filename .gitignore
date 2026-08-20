@@ -1,0 +1,13 @@
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+build/
+Payload/
+*.ipa
+*.xcarchive
+*.p12
+*.mobileprovision
+*.cer
+*.key
+*.p8
+.DS_Store

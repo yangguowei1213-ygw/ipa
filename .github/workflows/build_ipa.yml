@@ -1,0 +1,63 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate --spec project.yml
+
+      - name: Resolve project and scheme
+        run: |
+          test -f KeyboardApp.xcodeproj/project.pbxproj
+          xcodebuild -list -project KeyboardApp.xcodeproj
+
+      - name: Build unsigned application
+        run: |
+          xcodebuild build \
+            -project KeyboardApp.xcodeproj \
+            -scheme KeyboardApp \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=''
+
+      - name: Package unsigned IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP_PATH="$(find build/Build/Products -maxdepth 2 -type d -name 'KeyboardApp.app' -print -quit)"
+          test -n "$APP_PATH"
+          rm -rf Payload KeyboardApp-unsigned.ipa
+          mkdir Payload
+          cp -R "$APP_PATH" Payload/
+          ditto -c -k --sequesterRsrc --keepParent Payload KeyboardApp-unsigned.ipa
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-Keyboard-IPA-unsigned
+          path: KeyboardApp-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 7

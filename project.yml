@@ -1,0 +1,37 @@
+name: KeyboardApp
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+targets:
+  KeyboardApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: KeyboardApp
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.keyboardapp
+        INFOPLIST_FILE: KeyboardApp/Info.plist
+        CODE_SIGN_ENTITLEMENTS: KeyboardApp/KeyboardApp.entitlements
+    dependencies:
+      - target: KeyboardExtension
+        embed: true
+
+  KeyboardExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: KeyboardExtension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.keyboardapp.KeyboardExtension
+        INFOPLIST_FILE: KeyboardExtension/Info.plist
+        CODE_SIGN_ENTITLEMENTS: KeyboardExtension/KeyboardExtension.entitlements
+        APPLICATION_EXTENSION_API_ONLY: YES
