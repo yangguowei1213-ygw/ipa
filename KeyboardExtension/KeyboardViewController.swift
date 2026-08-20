@@ -6,6 +6,7 @@ final class KeyboardViewController: UIInputViewController {
     private var heightConstraint: NSLayoutConstraint!
     private var calloutView: KeyCalloutView?
     private var currentKey: KeyboardKey?
+    private var isShifted = true
 
     // Keep the extension lightweight: no image caches, model objects, or third-party frameworks.
     override func viewDidLoad() {
@@ -101,6 +102,7 @@ final class KeyboardViewController: UIInputViewController {
         key.addTarget(self, action: #selector(keyDown(_:)), for: .touchDown)
         key.addTarget(self, action: #selector(keyUp(_:)), for: [.touchUpInside, .touchUpOutside, .touchCancel])
         key.widthWeight = weight
+        key.accessibilityTraits = role == .shift ? [.button, .selected] : .button
         return key
     }
 
@@ -118,17 +120,31 @@ final class KeyboardViewController: UIInputViewController {
         currentKey = nil
 
         switch sender.role {
-        case .character: textDocumentProxy.insertText(sender.keyTitle)
+        case .character:
+            let text = isShifted ? sender.keyTitle.uppercased() : sender.keyTitle.lowercased()
+            textDocumentProxy.insertText(text)
+            isShifted = false
         case .space: textDocumentProxy.insertText(" ")
         case .delete: textDocumentProxy.deleteBackward()
         case .returnKey: textDocumentProxy.insertText("\n")
         case .nextKeyboard: advanceToNextInputMode()
-        case .shift: break // Shift state can be added without changing the layout API.
+        case .shift:
+            isShifted.toggle()
+            updateCharacterTitles()
         }
 
         // playInputClick is safe to call while the extension is visible. Full Access is not
         // required merely to play the system click; it is required for sensitive shared data.
         playInputClick()
+    }
+
+    private func updateCharacterTitles() {
+        keyboardStack.arrangedSubviews
+            .compactMap { $0 as? UIStackView }
+            .flatMap { $0.arrangedSubviews }
+            .compactMap { $0 as? KeyboardKey }
+            .filter { $0.role == .character }
+            .forEach { $0.setTitle(isShifted ? $0.keyTitle.uppercased() : $0.keyTitle.lowercased(), for: .normal) }
     }
 
     private func showCallout(for key: KeyboardKey) {
@@ -154,7 +170,7 @@ final class KeyboardViewController: UIInputViewController {
 }
 
 final class KeyboardKey: UIButton {
-    enum Role { case character, space, delete, shift, nextKeyboard, returnKey }
+    enum Role: Equatable { case character, space, delete, shift, nextKeyboard, returnKey }
     let role: Role
     let keyTitle: String
     var widthWeight: CGFloat = 1

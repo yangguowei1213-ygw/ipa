@@ -27,13 +27,13 @@ jobs:
 
       - name: Resolve project and scheme
         run: |
-          test -f KeyboardApp.xcodeproj/project.pbxproj
-          xcodebuild -list -project KeyboardApp.xcodeproj
+          test -f IOS26Keyboard.xcodeproj/project.pbxproj
+          xcodebuild -list -project IOS26Keyboard.xcodeproj
 
       - name: Build unsigned application
         run: |
           xcodebuild build \
-            -project KeyboardApp.xcodeproj \
+            -project IOS26Keyboard.xcodeproj \
             -scheme KeyboardApp \
             -configuration Release \
             -sdk iphoneos \

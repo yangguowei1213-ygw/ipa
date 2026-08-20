@@ -1,14 +1,14 @@
-name: KeyboardApp
+name: IOS26Keyboard
 options:
   bundleIdPrefix: com.example
   deploymentTarget:
-    iOS: "15.0"
+    iOS: "16.0"
   createIntermediateGroups: true
   developmentLanguage: en
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
 targets:
   KeyboardApp:
     type: application
@@ -17,7 +17,7 @@ targets:
       - path: KeyboardApp
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.keyboardapp
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.ios26keyboard
         INFOPLIST_FILE: KeyboardApp/Info.plist
         CODE_SIGN_ENTITLEMENTS: KeyboardApp/KeyboardApp.entitlements
     dependencies:
@@ -31,7 +31,7 @@ targets:
       - path: KeyboardExtension
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.keyboardapp.KeyboardExtension
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.ios26keyboard.KeyboardExtension
         INFOPLIST_FILE: KeyboardExtension/Info.plist
         CODE_SIGN_ENTITLEMENTS: KeyboardExtension/KeyboardExtension.entitlements
         APPLICATION_EXTENSION_API_ONLY: YES
